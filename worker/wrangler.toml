@@ -1,0 +1,6 @@
+name = "prime-topper-orders"
+main = "src/index.js"
+compatibility_date = "2026-10-03"
+
+[vars]
+ALLOWED_ORIGINS = "https://langsage.github.io,http://127.0.0.1:8765,http://localhost:8765"
