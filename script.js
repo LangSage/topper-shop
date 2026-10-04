@@ -4,6 +4,12 @@
   const STORAGE_KEY = "prime-topper-cart-v1";
   const UNIT_PRICE = 1000;
   const ORDER_ENDPOINT = document.querySelector('meta[name="order-endpoint"]')?.content.trim() || "";
+  const GOOGLE_FORM_FIELDS = {
+    name: "entry.1573826088",
+    phone: "entry.1891015766",
+    address: "entry.16190507",
+    order: "entry.637342470",
+  };
 
   const productCards = [...document.querySelectorAll(".product-card")];
   const cartPanel = document.querySelector(".cart-panel");
@@ -260,18 +266,34 @@
     document.querySelector("[data-form-error]").textContent = "";
 
     try {
-      const response = await fetch(ORDER_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          items: getDetailedCart().map(({ id, name, quantity }) => ({ id, name, quantity })),
-          page: window.location.href,
-          submittedAt: new Date().toISOString(),
-        }),
+      const detailedCart = getDetailedCart();
+      const orderNumber = `PT-${Date.now().toString(36).toUpperCase()}`;
+      const orderDetails = {
+        order_id: orderNumber,
+        items: detailedCart.map(({ id, name, price, quantity }) => ({
+          id,
+          name,
+          quantity,
+          unit_price_rub: price,
+          line_total_rub: price * quantity,
+        })),
+        package_count: getCartCount(),
+        total_rub: getCartCount() * UNIT_PRICE,
+        submitted_at: new Date().toISOString(),
+        page_url: window.location.href,
+      };
+      const googleFormData = new URLSearchParams({
+        [GOOGLE_FORM_FIELDS.name]: values.name,
+        [GOOGLE_FORM_FIELDS.phone]: values.phone,
+        [GOOGLE_FORM_FIELDS.address]: values.address,
+        [GOOGLE_FORM_FIELDS.order]: JSON.stringify(orderDetails),
       });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.ok) throw new Error(result.error || "Не удалось отправить заказ");
+
+      await fetch(ORDER_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        body: googleFormData,
+      });
 
       cart = [];
       saveAndRenderCart();
