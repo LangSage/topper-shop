@@ -26,7 +26,7 @@
 
   const products = productCards.map((card, index) => {
     const product = {
-      id: `product-${index + 1}`,
+      id: card.dataset.productId || `product-${index + 1}`,
       name: card.querySelector("h3").textContent.trim(),
       price: UNIT_PRICE,
       image: card.querySelector(".product-gallery__main").getAttribute("src"),
@@ -36,6 +36,21 @@
     button.dataset.productId = product.id;
     button.addEventListener("click", () => addToCart(product, button));
     return product;
+  });
+
+  // Filters only change visibility; product IDs and the cart stay unchanged.
+  document.querySelectorAll("[data-product-filter]").forEach((filterButton) => {
+    filterButton.addEventListener("click", () => {
+      const selected = filterButton.dataset.productFilter;
+      productCards.forEach((card) => {
+        card.hidden = selected !== "all" && card.dataset.productType !== selected;
+      });
+      document.querySelectorAll("[data-product-filter]").forEach((button) => {
+        const active = button === filterButton;
+        button.classList.toggle("category--active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    });
   });
 
   let cart = loadCart();
