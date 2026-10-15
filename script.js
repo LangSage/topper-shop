@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "prime-topper-cart-v1";
-  const UNIT_PRICE = 1000;
+  const UNIT_PRICE = 800;
   const ORDER_ENDPOINT = document.querySelector('meta[name="order-endpoint"]')?.content.trim() || "";
   const GOOGLE_FORM_FIELDS = {
     name: "entry.1573826088",
