@@ -9,6 +9,8 @@
   --accent-dark: #bfe7ff;
   --accent-soft: #eff8ff;
   --accent-ink: #27556f;
+  --raspberry: #d4145a;
+  --raspberry-dark: #b50f4b;
   --success: #17885d;
   --shadow: 0 18px 55px rgba(35, 35, 55, .10);
 }
@@ -96,8 +98,10 @@ h1 { margin-bottom: 24px; font-size: clamp(44px, 5.3vw, 78px); line-height: .98;
 .specs { margin-bottom: 5px; padding: 10px; display: grid; grid-template-columns: 1.4fr .7fr .7fr 1.3fr; gap: 5px; border-radius: 12px; background: var(--base); }
 .specs span { font-size: 9px; font-weight: 800; text-align: center; }
 .specs span:first-child { color: var(--accent-ink); }
-.buy { width: 100%; min-height: 42px; margin-top: 8px; display: grid; place-items: center; border: 0; border-radius: 13px; color: var(--accent-ink); background: var(--accent); cursor: pointer; font-size: 11px; font-weight: 800; box-shadow: 0 8px 18px rgba(74,139,175,.17); transition: background .2s, transform .2s; }
-.buy:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.buy { width: 100%; min-height: 42px; margin-top: 8px; display: grid; place-items: center; border: 0; border-radius: 13px; color: #fff; background: var(--raspberry); cursor: pointer; font-size: 11px; font-weight: 800; box-shadow: 0 10px 22px rgba(212,20,90,.30); transition: background .2s, box-shadow .2s, transform .2s; }
+.buy:hover { background: var(--raspberry-dark); box-shadow: 0 13px 28px rgba(212,20,90,.38); transform: translateY(-2px); }
+.buy:focus-visible { outline: 3px solid rgba(212,20,90,.24); outline-offset: 3px; }
+.buy:active { transform: translateY(0); }
 .buy.is-added { color: #fff; background: var(--success); }
 
 .sales { margin-top: 110px; padding: clamp(32px, 5vw, 62px); display: grid; grid-template-columns: 1fr 1fr; gap: 70px; color: #fff; border-radius: 30px; background: var(--ink); }
