@@ -26,6 +26,8 @@
   const lightboxCaption = document.querySelector("[data-lightbox-caption]");
   let lastFocusedElement = null;
   let lastLightboxTarget = null;
+  let lightboxItems = [];
+  let lightboxIndex = 0;
   let toastTimer = null;
 
   const products = productCards.map((card, index) => {
@@ -41,6 +43,8 @@
     button.addEventListener("click", () => addToCart(product, button));
     return product;
   });
+
+  initializeProductGalleries();
 
   // Filters only change visibility; product IDs and the cart stay unchanged.
   document.querySelectorAll("[data-product-filter]").forEach((filterButton) => {
@@ -74,6 +78,8 @@
   });
 
   document.addEventListener("keydown", (event) => {
+    if (!imageLightbox.hidden && event.key === "ArrowLeft") navigateLightbox(-1);
+    if (!imageLightbox.hidden && event.key === "ArrowRight") navigateLightbox(1);
     if (event.key !== "Escape") return;
     if (!imageLightbox.hidden) closeImageLightbox();
     else if (checkoutModal.classList.contains("is-open")) closeCheckout();
@@ -104,19 +110,18 @@
 
   checkoutForm.addEventListener("submit", submitOrder);
 
-  document.querySelectorAll(".product-gallery img, .hero__visual > img, .delivery__image > img").forEach((image) => {
-    image.tabIndex = 0;
-    image.setAttribute("role", "button");
-    image.setAttribute("aria-label", `Открыть фотографию: ${image.alt}`);
-    image.addEventListener("click", () => openImageLightbox(image));
-    image.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      openImageLightbox(image);
-    });
+  document.querySelectorAll(".product-gallery").forEach((gallery) => {
+    const images = [...gallery.querySelectorAll("img")];
+    images.forEach((image) => setupInteractiveImage(image, images));
   });
 
+  const heroImages = [...document.querySelectorAll(".hero__showcase img")];
+  heroImages.forEach((image) => setupInteractiveImage(image, heroImages));
+  document.querySelectorAll(".delivery__image > img").forEach((image) => setupInteractiveImage(image, [image]));
+
   document.querySelector("[data-lightbox-close]").addEventListener("click", closeImageLightbox);
+  document.querySelector("[data-lightbox-prev]").addEventListener("click", () => navigateLightbox(-1));
+  document.querySelector("[data-lightbox-next]").addEventListener("click", () => navigateLightbox(1));
   imageLightbox.addEventListener("click", (event) => {
     if (event.target === imageLightbox) closeImageLightbox();
   });
@@ -133,11 +138,84 @@
     }
   }
 
-  function openImageLightbox(sourceImage) {
+  function initializeProductGalleries() {
+    document.querySelectorAll(".product-gallery").forEach((gallery) => {
+      const images = [...gallery.querySelectorAll("img")];
+      if (images.length < 2) return;
+
+      const previousButton = document.createElement("button");
+      previousButton.className = "gallery-nav gallery-nav--prev";
+      previousButton.type = "button";
+      previousButton.setAttribute("aria-label", "Предыдущая фотография");
+      previousButton.textContent = "‹";
+
+      const nextButton = document.createElement("button");
+      nextButton.className = "gallery-nav gallery-nav--next";
+      nextButton.type = "button";
+      nextButton.setAttribute("aria-label", "Следующая фотография");
+      nextButton.textContent = "›";
+
+      const dots = document.createElement("div");
+      dots.className = "gallery-dots";
+      dots.setAttribute("aria-label", "Выбор фотографии");
+      images.forEach((image, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.setAttribute("aria-label", `Фотография ${index + 1}`);
+        dot.addEventListener("click", (event) => {
+          event.stopPropagation();
+          setGalleryIndex(gallery, index);
+        });
+        dots.append(dot);
+      });
+
+      previousButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setGalleryIndex(gallery, Number(gallery.dataset.galleryIndex) - 1);
+      });
+      nextButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setGalleryIndex(gallery, Number(gallery.dataset.galleryIndex) + 1);
+      });
+
+      gallery.append(previousButton, nextButton, dots);
+      setGalleryIndex(gallery, 0);
+    });
+  }
+
+  function setGalleryIndex(gallery, requestedIndex) {
+    const images = [...gallery.querySelectorAll("img")];
+    const dots = [...gallery.querySelectorAll(".gallery-dots button")];
+    const index = (requestedIndex + images.length) % images.length;
+    gallery.dataset.galleryIndex = String(index);
+    images.forEach((image, imageIndex) => {
+      const active = imageIndex === index;
+      image.classList.toggle("is-active", active);
+      image.setAttribute("aria-hidden", String(!active));
+      image.tabIndex = active ? 0 : -1;
+    });
+    dots.forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === index));
+  }
+
+  function setupInteractiveImage(image, group) {
+    image.setAttribute("role", "button");
+    image.setAttribute("aria-label", `Открыть фотографию: ${image.alt}`);
+    image.addEventListener("click", () => openImageLightbox(image, group));
+    image.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openImageLightbox(image, group);
+    });
+  }
+
+  function openImageLightbox(sourceImage, group = [sourceImage]) {
     lastLightboxTarget = sourceImage;
-    lightboxImage.src = sourceImage.currentSrc || sourceImage.src;
-    lightboxImage.alt = sourceImage.alt;
-    lightboxCaption.textContent = sourceImage.alt;
+    lightboxItems = group;
+    lightboxIndex = Math.max(0, lightboxItems.indexOf(sourceImage));
+    renderLightboxImage();
+    document.querySelectorAll("[data-lightbox-prev], [data-lightbox-next]").forEach((button) => {
+      button.hidden = lightboxItems.length < 2;
+    });
     imageLightbox.hidden = false;
     imageLightbox.inert = false;
     imageLightbox.setAttribute("aria-hidden", "false");
@@ -145,11 +223,26 @@
     imageLightbox.querySelector("[data-lightbox-close]").focus();
   }
 
+  function navigateLightbox(direction) {
+    if (lightboxItems.length < 2) return;
+    lightboxIndex = (lightboxIndex + direction + lightboxItems.length) % lightboxItems.length;
+    renderLightboxImage();
+  }
+
+  function renderLightboxImage() {
+    const image = lightboxItems[lightboxIndex];
+    if (!image) return;
+    lightboxImage.src = image.currentSrc || image.src;
+    lightboxImage.alt = image.alt;
+    lightboxCaption.textContent = `${image.alt} · ${lightboxIndex + 1} из ${lightboxItems.length}`;
+  }
+
   function closeImageLightbox() {
     imageLightbox.hidden = true;
     imageLightbox.inert = true;
     imageLightbox.setAttribute("aria-hidden", "true");
     lightboxImage.removeAttribute("src");
+    lightboxItems = [];
     document.body.classList.remove("overlay-open");
     lastLightboxTarget?.focus?.();
   }
