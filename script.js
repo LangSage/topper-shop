@@ -21,7 +21,11 @@
   const cartFooter = document.querySelector("[data-cart-footer]");
   const checkoutForm = document.querySelector("[data-checkout-form]");
   const toast = document.querySelector(".toast");
+  const imageLightbox = document.querySelector("[data-image-lightbox]");
+  const lightboxImage = document.querySelector("[data-lightbox-image]");
+  const lightboxCaption = document.querySelector("[data-lightbox-caption]");
   let lastFocusedElement = null;
+  let lastLightboxTarget = null;
   let toastTimer = null;
 
   const products = productCards.map((card, index) => {
@@ -71,7 +75,8 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    if (checkoutModal.classList.contains("is-open")) closeCheckout();
+    if (!imageLightbox.hidden) closeImageLightbox();
+    else if (checkoutModal.classList.contains("is-open")) closeCheckout();
     else if (cartPanel.classList.contains("is-open")) closeCart();
   });
 
@@ -99,6 +104,23 @@
 
   checkoutForm.addEventListener("submit", submitOrder);
 
+  document.querySelectorAll(".product-gallery img, .hero__visual > img, .delivery__image > img").forEach((image) => {
+    image.tabIndex = 0;
+    image.setAttribute("role", "button");
+    image.setAttribute("aria-label", `Открыть фотографию: ${image.alt}`);
+    image.addEventListener("click", () => openImageLightbox(image));
+    image.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openImageLightbox(image);
+    });
+  });
+
+  document.querySelector("[data-lightbox-close]").addEventListener("click", closeImageLightbox);
+  imageLightbox.addEventListener("click", (event) => {
+    if (event.target === imageLightbox) closeImageLightbox();
+  });
+
   function loadCart() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -109,6 +131,27 @@
     } catch {
       return [];
     }
+  }
+
+  function openImageLightbox(sourceImage) {
+    lastLightboxTarget = sourceImage;
+    lightboxImage.src = sourceImage.currentSrc || sourceImage.src;
+    lightboxImage.alt = sourceImage.alt;
+    lightboxCaption.textContent = sourceImage.alt;
+    imageLightbox.hidden = false;
+    imageLightbox.inert = false;
+    imageLightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("overlay-open");
+    imageLightbox.querySelector("[data-lightbox-close]").focus();
+  }
+
+  function closeImageLightbox() {
+    imageLightbox.hidden = true;
+    imageLightbox.inert = true;
+    imageLightbox.setAttribute("aria-hidden", "true");
+    lightboxImage.removeAttribute("src");
+    document.body.classList.remove("overlay-open");
+    lastLightboxTarget?.focus?.();
   }
 
   function addToCart(product, button) {
