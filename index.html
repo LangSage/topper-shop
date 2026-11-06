@@ -54,6 +54,17 @@
         .header .brand strong { font-size: 20px; }
         .header .brand__flower { width: 24px; height: 30px; }
       }
+      .sales { padding: clamp(16px, 2.5vw, 28px); gap: clamp(12px, 2.5vw, 28px); align-items: center; }
+      .sales .eyebrow { margin-bottom: 6px; }
+      .sales h2 { font-size: clamp(22px, 2.5vw, 34px); }
+      .sales > .sales__intro > p:last-child { margin-top: 8px; line-height: 1.45; }
+      .sales__list { gap: 8px; }
+      .sales__list article { min-height: 0; padding: 9px; grid-template-columns: 24px minmax(0, 1fr); gap: 7px; border-radius: 12px; }
+      .sales__list article > strong { width: 24px; height: 24px; border-radius: 7px; }
+      .sales__list small { margin-top: 3px; line-height: 1.35; }
+      @media (min-width: 360px) and (max-width: 700px) {
+        .sales__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
     </style>
   </head>
   <body>
@@ -102,13 +113,13 @@
         <div class="sales__intro">
           <p class="eyebrow">Главное для цветочных магазинов</p>
           <h2 id="florist-benefits-title">Детали, которые помогают продавать больше</h2>
-          <p>Топперы и конверты усиливают впечатление от букета, выделяют ваш магазин и дают покупателю понятную причину выбрать именно вас.</p>
+          <p>Топперы и конверты дополняют букет и выделяют ваш магазин.</p>
         </div>
         <div class="sales__list">
-          <article><strong>01</strong><span><b>Поднимают продажи</b><small>Выразительная деталь привлекает внимание к букету и помогает предложить покупателю более ценное готовое решение.</small></span></article>
-          <article><strong>02</strong><span><b>Увеличивают лояльность</b><small>Актуальный вид конвертов запоминается покупателям — им хочется возвращаться именно в ваш цветочный магазин.</small></span></article>
-          <article><strong>03</strong><span><b>Делают букет завершённым подарком</b><small>Топпер сразу добавляет смысл и эмоцию — это большой плюс для вас и удобное решение для покупателя.</small></span></article>
-          <article><strong>04</strong><span><b>Актуальны круглый год</b><small>Несезонные фразы «Ты прекрасна», «От всей души» и «Самой красивой» делают топперы востребованными в любое время года.</small></span></article>
+          <article><strong>01</strong><span><b>Поднимают продажи</b><small>Помогают увеличить средний чек.</small></span></article>
+          <article><strong>02</strong><span><b>Увеличивают лояльность</b><small>Запоминаются покупателям.</small></span></article>
+          <article><strong>03</strong><span><b>Делают букет завершённым подарком</b><small>Букет сразу готов к вручению.</small></span></article>
+          <article><strong>04</strong><span><b>Актуальны круглый год</b><small>Подходят для разных поводов.</small></span></article>
         </div>
       </section>
 
