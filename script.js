@@ -407,7 +407,7 @@
 
     if (formData.get("company")) return;
     if (!ORDER_ENDPOINT) {
-      document.querySelector("[data-form-error]").textContent = "Приём заявок ещё подключается. Пока оформите заказ по телефону 8 900 590-68-53.";
+      document.querySelector("[data-form-error]").textContent = "Приём заявок ещё подключается. Пока оформите заказ по телефону 8 933 687-28-64.";
       return;
     }
 
@@ -452,7 +452,7 @@
       document.querySelector("[data-checkout-content]").hidden = true;
       document.querySelector("[data-checkout-success]").hidden = false;
     } catch {
-      document.querySelector("[data-form-error]").textContent = "Не получилось отправить заказ. Проверьте интернет или позвоните по номеру 8 900 590-68-53.";
+      document.querySelector("[data-form-error]").textContent = "Не получилось отправить заказ. Проверьте интернет или позвоните по номеру 8 933 687-28-64.";
     } finally {
       submitButton.disabled = false;
       submitButton.classList.remove("is-loading");
