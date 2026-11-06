@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#d6efff" />
     <meta name="description" content="Авторские топперы и подарочные конверты для букетов, поздравлений и тёплых моментов." />
     <meta name="order-endpoint" content="https://docs.google.com/forms/d/e/1FAIpQLSe3asQFRvU0HUXdkHz7w8zmleEKsORVap7Zfl76Xv9bsNJpRg/formResponse" />
-    <title>Тёплые слова — топперы и подарочные конверты</title>
+    <title>Цветочная деталь — топперы и подарочные конверты</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <!-- Yandex.Metrika counter -->
     <script>
@@ -38,15 +38,32 @@
       });
     </script>
     <!-- /Yandex.Metrika counter -->
+    <style>
+      .brand__flower { width: 29px; height: 35px; flex: none; color: var(--raspberry); }
+      .brand strong, .hero .hero__title { color: #000; font-family: "Marck Script", cursive; font-weight: 400; }
+      .brand strong { font-size: 23px; }
+      .brand small { display: block; max-width: 24ch; font-size: 10px; line-height: 1.2; text-transform: none; letter-spacing: normal; }
+      .hero .hero__title { margin-bottom: 15px; font-size: clamp(40px, 5.5vw, 72px); white-space: normal; letter-spacing: normal; }
+      .hero__pitch { font-size: 15px; text-transform: none; letter-spacing: normal; }
+      .hero .hero__detail { margin-bottom: 0; font-size: clamp(16px, 2vw, 20px); line-height: 1.5; }
+      .hero__catalog-link { display: flex; flex-direction: column; align-items: center; gap: 3px; width: fit-content; margin: 20px auto; color: var(--accent-ink); font-size: 14px; font-weight: 800; text-align: center; }
+      .hero__catalog-link:hover { text-decoration: underline; }
+      .hero__catalog-link span { font-size: 24px; line-height: 1; }
+      @media (max-width: 420px) {
+        .header .brand { gap: 6px; }
+        .header .brand strong { font-size: 20px; }
+        .header .brand__flower { width: 24px; height: 30px; }
+      }
+    </style>
   </head>
   <body>
     <noscript><div><img src="https://mc.yandex.ru/watch/113957903" style="position: absolute; left: -9999px" alt="" /></div></noscript>
     <div class="announcement">Доставка в цветочный магазин или по вашему адресу</div>
 
     <header class="header shell">
-      <a class="brand" href="#top" aria-label="Тёплые слова — на главную">
-        <span class="brand__mark">тс</span>
-        <span><strong>Тёплые слова</strong><small>топперы и подарочные конверты</small></span>
+      <a class="brand" href="#top" aria-label="Цветочная деталь — на главную">
+        <svg class="brand__flower" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 26v19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M20 40c0-8 6-12 13-12-1 7-6 12-13 12Z" fill="currentColor"/><path d="M20 10C15 2 8 7 11 14 2 14 4 24 12 23c-2 8 7 10 8 3 3 7 11 5 9-3 8 1 10-9 1-9 3-7-5-12-10-4Z" fill="currentColor"/><circle cx="20" cy="18" r="3" fill="white"/></svg>
+        <span><strong>Цветочная деталь</strong><small>Оптовый поставщик конвертов и открыток</small></span>
       </a>
       <nav aria-label="Основная навигация">
         <a href="#catalog">Каталог</a><a href="#delivery">Доставка</a><a href="#about">О нас</a><a href="#contacts">Контакты</a>
@@ -63,8 +80,10 @@
     <main id="top">
       <section class="hero shell">
         <div class="hero__copy">
-          <p class="eyebrow">Маленькая деталь с большим смыслом</p>
-          <h1 class="hero__title">Prime Topper <span class="heart-logo" aria-label="Сердце с буквой Ф"><svg viewBox="0 0 64 58" aria-hidden="true"><path d="M32 54S4 37 4 18C4 8 11 3 20 3c5 0 10 3 12 8 2-5 7-8 12-8 9 0 16 5 16 15 0 19-28 36-28 36Z"/><text x="32" y="27">Ф</text></svg></span></h1>
+          <h1 class="hero__title">Цветочная деталь</h1>
+          <p class="eyebrow hero__pitch">Каждый букет — возможность продать больше</p>
+          <p class="hero__lead hero__detail">Дополняйте ассортимент, увеличивайте средний чек и выделяйтесь среди конкурентов.</p>
+          <a class="hero__catalog-link" href="#catalog">Перейти в оптовый каталог<span aria-hidden="true">↓</span></a>
           <p class="hero__lead">В упаковке 10 штук. Одно изделие — 80 ₽.</p>
           <div class="hero__actions"><a class="button button--primary" href="#catalog">Смотреть каталог</a><a class="button button--light" href="#delivery">Как заказать</a></div>
           <ul class="trust-list"><li>✓ Премиальный дизайн</li><li>✓ В наличии</li><li>✓ Удобная доставка</li></ul>
@@ -197,7 +216,7 @@
       </section>
     </main>
 
-    <footer class="footer shell"><a class="brand" href="#top"><span class="brand__mark">тс</span><span><strong>Тёплые слова</strong><small>топперы и подарочные конверты</small></span></a><p>© 2026 Тёплые слова. Все фотографии принадлежат владельцу магазина.</p><a href="#top">Наверх ↑</a></footer>
+    <footer class="footer shell"><a class="brand" href="#top"><svg class="brand__flower" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 26v19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M20 40c0-8 6-12 13-12-1 7-6 12-13 12Z" fill="currentColor"/><path d="M20 10C15 2 8 7 11 14 2 14 4 24 12 23c-2 8 7 10 8 3 3 7 11 5 9-3 8 1 10-9 1-9 3-7-5-12-10-4Z" fill="currentColor"/><circle cx="20" cy="18" r="3" fill="white"/></svg><span><strong>Цветочная деталь</strong><small>Оптовый поставщик конвертов и открыток</small></span></a><p>© 2026 Цветочная деталь. Все фотографии принадлежат владельцу магазина.</p><a href="#top">Наверх ↑</a></footer>
 
     <div class="cart-backdrop" data-cart-close hidden></div>
     <aside class="cart-panel" aria-labelledby="cart-title" aria-hidden="true" inert>
