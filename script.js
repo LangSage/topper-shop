@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "prime-topper-cart-v1";
-  const UNIT_PRICE = 800;
+  const PACK_SIZE = 10;
   const ORDER_ENDPOINT = document.querySelector('meta[name="order-endpoint"]')?.content.trim() || "";
   const GOOGLE_FORM_FIELDS = {
     name: "entry.1573826088",
@@ -34,7 +34,7 @@
     const product = {
       id: card.dataset.productId || `product-${index + 1}`,
       name: card.querySelector("h3").textContent.trim(),
-      price: UNIT_PRICE,
+      price: card.dataset.unitPrice ? Number(card.dataset.unitPrice) * PACK_SIZE : 800,
       image: card.querySelector(".product-gallery__main").getAttribute("src"),
     };
 
@@ -283,7 +283,7 @@
   function renderCart() {
     const detailedCart = getDetailedCart();
     const count = getCartCount();
-    const total = count * UNIT_PRICE;
+    const total = detailedCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     document.querySelectorAll("[data-cart-count]").forEach((element) => {
       element.textContent = count;
@@ -429,7 +429,7 @@
           line_total_rub: price * quantity,
         })),
         package_count: getCartCount(),
-        total_rub: getCartCount() * UNIT_PRICE,
+        total_rub: detailedCart.reduce((sum, item) => sum + item.price * item.quantity, 0),
         submitted_at: new Date().toISOString(),
         page_url: window.location.href,
       };
