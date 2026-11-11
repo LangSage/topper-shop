@@ -115,6 +115,9 @@
       .catalog__offer, .catalog__offer * { font-family: "Marck Script", cursive; }
           .product-quantity { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 13px; }
       .product-quantity input { width: 66px; min-height: 36px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: inherit; }
+          .hero.hero--simple { display: block; min-height: 0; padding: clamp(24px, 4vw, 52px) 0 0; text-align: center; }
+      .hero--simple .hero__question { max-width: 820px; margin-inline: auto; }
+      .hero--simple + .catalog { padding-top: clamp(28px, 5vw, 56px); }
     </style>
   </head>
   <body>
@@ -138,27 +141,9 @@
     </header>
 
     <main id="top">
-      <section class="hero shell">
-        <div class="hero__copy">
-          <h1 class="hero__question">Покупатель выбрал букет. Но почему на этом должна заканчиваться продажа?</h1>
-          <p class="hero__lead hero__detail">Оригинальные конверты и открытки — простой способ предложить покупателю больше, увеличить средний чек и сделать подарок запоминающимся.</p>
-          <p class="hero__lead">Топперы — 40 ₽ за штуку, конверты — 50 ₽ за штуку.</p>
-          <p class="hero__lead hero__detail hero__invitation">Посмотрите ассортимент и оцените, что может приносить дополнительную прибыль вашему магазину.</p>
-        </div>
-        <div class="hero__presentation">
-        <div class="hero__visual hero__visual--envelopes">
-          <div class="hero__showcase" aria-label="Презентация конвертов и топперов">
-            <img class="hero__envelope hero__envelope--flowers" src="assets/products/envelope-flowers-2-cropped.webp" alt="Конверт Ты прекрасна с украшениями-ромашками" width="1010" height="780" fetchpriority="high" />
-            <img class="hero__envelope" src="assets/products/envelope-beauty-1-cropped.webp" alt="Общий вид розового конверта Самой красивой" loading="lazy" />
-            <img class="hero__envelope" src="assets/products/photo-10.webp" alt="Топперы Ты прекрасна в композиции" loading="lazy" />
-            <img class="hero__envelope" src="assets/products/photo-18.webp" alt="Топперы Для тебя с любовью" loading="lazy" />
-          <div class="hero__brand"><svg class="brand__flower" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 26v19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M20 40c0-8 6-12 13-12-1 7-6 12-13 12Z" fill="currentColor"/><path d="M20 10C15 2 8 7 11 14 2 14 4 24 12 23c-2 8 7 10 8 3 3 7 11 5 9-3 8 1 10-9 1-9 3-7-5-12-10-4Z" fill="currentColor"/><circle cx="20" cy="18" r="3" fill="white"/></svg><span>Конверты Premium</span></div>
-          </div>
-          <div class="hero__note"><strong>4</strong><span>дизайна<br />в каталоге</span></div>
-          <div class="hero__stock"><i></i> Есть в наличии</div>
-        </div>
-          <p class="hero__offer">От 10 шт. скидка 5%</p>
-        </div>
+      <section class="hero hero--simple shell">
+        <h1 class="hero__question">Конверты и топперы, которые быстро раскупают и поднимают продажи</h1>
+        <p class="hero__offer">От 10 шт. скидка 5%</p>
       </section>
 
       <section class="catalog shell" id="catalog">
