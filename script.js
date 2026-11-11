@@ -1,8 +1,9 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "prime-topper-cart-v1";
-  const DEFAULT_PACK_SIZE = 10;
+  const STORAGE_KEY = "prime-topper-cart-v2";
+  const LEGACY_STORAGE_KEY = "prime-topper-cart-v1";
+  const MAX_QUANTITY = 60;
   const ORDER_ENDPOINT = document.querySelector('meta[name="order-endpoint"]')?.content.trim() || "";
   const GOOGLE_FORM_FIELDS = {
     name: "entry.1573826088",
@@ -31,11 +32,10 @@
   let toastTimer = null;
 
   const products = productCards.map((card, index) => {
-    const packSize = Number(card.dataset.packSize) || DEFAULT_PACK_SIZE;
     const product = {
       id: card.dataset.productId || `product-${index + 1}`,
       name: card.querySelector("h3").textContent.trim(),
-      price: card.dataset.unitPrice ? Number(card.dataset.unitPrice) * packSize : 800,
+      price: Number(card.dataset.unitPrice),
       image: card.querySelector(".product-gallery__main").getAttribute("src"),
     };
 
@@ -93,7 +93,7 @@
     const item = cart.find((entry) => entry.id === button.dataset.productId);
     if (!item) return;
 
-    if (button.dataset.cartAction === "increase") item.quantity = Math.min(20, item.quantity + 1);
+    if (button.dataset.cartAction === "increase") item.quantity = Math.min(MAX_QUANTITY, item.quantity + 1);
     if (button.dataset.cartAction === "decrease") item.quantity -= 1;
     if (button.dataset.cartAction === "remove") item.quantity = 0;
     cart = cart.filter((entry) => entry.quantity > 0);
@@ -129,11 +129,13 @@
 
   function loadCart() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      const currentCart = localStorage.getItem(STORAGE_KEY);
+      const saved = JSON.parse(currentCart ?? localStorage.getItem(LEGACY_STORAGE_KEY));
+      const piecesPerSavedItem = currentCart === null ? 3 : 1;
       if (!Array.isArray(saved)) return [];
       return saved
         .filter((item) => products.some((product) => product.id === item.id))
-        .map((item) => ({ id: item.id, quantity: Math.min(20, Math.max(1, Number(item.quantity) || 1)) }));
+        .map((item) => ({ id: item.id, quantity: Math.min(MAX_QUANTITY, Math.max(1, Math.trunc(Number(item.quantity)) || 1) * piecesPerSavedItem) }));
     } catch {
       return [];
     }
@@ -250,7 +252,7 @@
 
   function addToCart(product, button) {
     const existing = cart.find((item) => item.id === product.id);
-    if (existing) existing.quantity = Math.min(20, existing.quantity + 1);
+    if (existing) existing.quantity = Math.min(MAX_QUANTITY, existing.quantity + 1);
     else cart.push({ id: product.id, quantity: 1 });
 
     saveAndRenderCart();
@@ -284,7 +286,7 @@
   function renderCart() {
     const detailedCart = getDetailedCart();
     const count = getCartCount();
-    const total = detailedCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const { total } = getOrderPricing(detailedCart);
 
     document.querySelectorAll("[data-cart-count]").forEach((element) => {
       element.textContent = count;
@@ -292,7 +294,7 @@
     });
     document.querySelector("[data-cart-total]").textContent = formatPrice(total);
     document.querySelector("[data-checkout-total]").textContent = formatPrice(total);
-    document.querySelector("[data-checkout-count]").textContent = pluralizePackages(count);
+    document.querySelector("[data-checkout-count]").textContent = `${count} шт.`;
     cartEmpty.hidden = detailedCart.length > 0;
     cartFooter.hidden = detailedCart.length === 0;
 
@@ -301,9 +303,9 @@
         <img src="${item.image}" alt="" />
         <div class="cart-item__content">
           <strong>${escapeHtml(item.name)}</strong>
-          <small>${formatPrice(item.price)} за упаковку</small>
+          <small>${formatPrice(item.price)} за штуку</small>
           <div class="cart-item__controls">
-            <div class="quantity" aria-label="Количество упаковок">
+            <div class="quantity" aria-label="Количество штук">
               <button type="button" data-cart-action="decrease" data-product-id="${item.id}" aria-label="Уменьшить количество">−</button>
               <span>${item.quantity}</span>
               <button type="button" data-cart-action="increase" data-product-id="${item.id}" aria-label="Увеличить количество">+</button>
@@ -316,11 +318,11 @@
     `).join("");
   }
 
-  function pluralizePackages(count) {
-    const mod10 = count % 10;
-    const mod100 = count % 100;
-    const word = mod10 === 1 && mod100 !== 11 ? "упаковка" : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "упаковки" : "упаковок";
-    return `${count} ${word}`;
+  function getOrderPricing(items) {
+    const count = items.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const discountKopecks = count >= 10 ? Math.round(subtotal * 5) : 0;
+    return { count, subtotal, discount: discountKopecks / 100, total: (subtotal * 100 - discountKopecks) / 100 };
   }
 
   function openCart() {
@@ -419,6 +421,7 @@
 
     try {
       const detailedCart = getDetailedCart();
+      const pricing = getOrderPricing(detailedCart);
       const orderNumber = `PT-${Date.now().toString(36).toUpperCase()}`;
       const orderDetails = {
         order_id: orderNumber,
@@ -429,8 +432,10 @@
           unit_price_rub: price,
           line_total_rub: price * quantity,
         })),
-        package_count: getCartCount(),
-        total_rub: detailedCart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        item_count: pricing.count,
+        subtotal_rub: pricing.subtotal,
+        discount_rub: pricing.discount,
+        total_rub: pricing.total,
         submitted_at: new Date().toISOString(),
         page_url: window.location.href,
       };
