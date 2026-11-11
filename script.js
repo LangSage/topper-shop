@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "prime-topper-cart-v1";
-  const PACK_SIZE = 10;
+  const DEFAULT_PACK_SIZE = 10;
   const ORDER_ENDPOINT = document.querySelector('meta[name="order-endpoint"]')?.content.trim() || "";
   const GOOGLE_FORM_FIELDS = {
     name: "entry.1573826088",
@@ -31,10 +31,11 @@
   let toastTimer = null;
 
   const products = productCards.map((card, index) => {
+    const packSize = Number(card.dataset.packSize) || DEFAULT_PACK_SIZE;
     const product = {
       id: card.dataset.productId || `product-${index + 1}`,
       name: card.querySelector("h3").textContent.trim(),
-      price: card.dataset.unitPrice ? Number(card.dataset.unitPrice) * PACK_SIZE : 800,
+      price: card.dataset.unitPrice ? Number(card.dataset.unitPrice) * packSize : 800,
       image: card.querySelector(".product-gallery__main").getAttribute("src"),
     };
 
