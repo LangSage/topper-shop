@@ -41,7 +41,17 @@
 
     const button = card.querySelector(".buy");
     button.dataset.productId = product.id;
-    button.addEventListener("click", () => addToCart(product, button));
+    button.insertAdjacentHTML("beforebegin", `
+      <label class="product-quantity">
+        <span>Количество, шт.</span>
+        <input type="number" min="1" max="${MAX_QUANTITY}" step="1" value="1" inputmode="numeric" required>
+      </label>
+    `);
+    const quantityInput = card.querySelector(".product-quantity input");
+    button.addEventListener("click", () => {
+      if (!quantityInput.reportValidity()) return;
+      addToCart(product, button, quantityInput.valueAsNumber);
+    });
     return product;
   });
 
@@ -98,6 +108,10 @@
     if (button.dataset.cartAction === "remove") item.quantity = 0;
     cart = cart.filter((entry) => entry.quantity > 0);
     saveAndRenderCart();
+    const nextButton = [...cartItems.querySelectorAll("button[data-cart-action]")].find(
+      (control) => control.dataset.productId === item.id && control.dataset.cartAction === button.dataset.cartAction,
+    );
+    nextButton?.focus();
   });
 
   const phoneInput = checkoutForm.elements.phone;
@@ -250,20 +264,24 @@
     lastLightboxTarget?.focus?.();
   }
 
-  function addToCart(product, button) {
+  function addToCart(product, button, quantity) {
     const existing = cart.find((item) => item.id === product.id);
-    if (existing) existing.quantity = Math.min(MAX_QUANTITY, existing.quantity + 1);
-    else cart.push({ id: product.id, quantity: 1 });
+    const added = Math.min(quantity, MAX_QUANTITY - (existing?.quantity ?? 0));
+    if (added <= 0) {
+      showToast(`В корзине уже ${MAX_QUANTITY} шт. этого товара`);
+      return;
+    }
+    if (existing) existing.quantity += added;
+    else cart.push({ id: product.id, quantity: added });
 
     saveAndRenderCart();
-    const originalText = button.textContent;
     button.textContent = "Добавлено ✓";
     button.classList.add("is-added");
     window.setTimeout(() => {
-      button.textContent = originalText;
+      button.textContent = "Добавить в корзину";
       button.classList.remove("is-added");
     }, 1100);
-    showToast(`${product.name} добавлен в корзину`);
+    showToast(`${product.name} · добавлено ${added} шт.`);
   }
 
   function saveAndRenderCart() {
